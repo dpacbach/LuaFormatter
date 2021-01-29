@@ -3,34 +3,34 @@ name: Build
 on: [push]
 
 jobs:
-  luarocks:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        repository: luarocks/luarocks.git
-        ref: master
-    - name: Install Lua 5.3
-      run: sudo apt install lua5.3 liblua5.3-dev
-    - name: Install LuaRocks
-      run: |
-       ./configure
-       make build
-       sudo make install
-       cd ~
-    - name: Install LuaFormatter
-      run: sudo -E bash -c 'luarocks install --server=https://luarocks.org/dev luaformatter'
+  # luarocks:
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       repository: luarocks/luarocks.git
+  #       ref: master
+  #   - name: Install Lua 5.3
+  #     run: sudo apt install lua5.3 liblua5.3-dev
+  #   - name: Install LuaRocks
+  #     run: |
+  #      ./configure
+  #      make build
+  #      sudo make install
+  #      cd ~
+  #   - name: Install LuaFormatter
+  #     run: sudo -E bash -c 'luarocks install --server=https://luarocks.org/dev luaformatter'
 
-  ubuntu:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build LuaFormatter
-      run: |
-         git submodule update --init
-         cmake -DCMAKE_BUILD_TYPE=Debug
-         make
-         CTEST_OUTPUT_ON_FAILURE=1 ctest
+  # ubuntu:
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Build LuaFormatter
+  #     run: |
+  #        git submodule update --init
+  #        cmake -DCMAKE_BUILD_TYPE=Debug
+  #        make
+  #        CTEST_OUTPUT_ON_FAILURE=1 ctest
 
   windows:
     runs-on: windows-latest
@@ -41,17 +41,20 @@ jobs:
     - name: Build LuaFormatter
       run: |
          git submodule update --init
-         cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Debug
-         msbuild "lua-formatter.sln" /clp:ErrorsOnly /target:Build
-         ctest
+         cmake -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release
+         msbuild "lua-formatter.sln" /p:Configuration=Release /p:Platform=x64 /clp:ErrorsOnly /target:Build
+         type lua-format.vcxproj
+         dir
+         dir Release
+        #  ctest
 
-  darwin:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build LuaFormatter
-      run: |
-         git submodule update --init
-         cmake -DCMAKE_BUILD_TYPE=Debug
-         make
-         CTEST_OUTPUT_ON_FAILURE=1 ctest
+  # darwin:
+  #   runs-on: macos-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Build LuaFormatter
+  #     run: |
+  #        git submodule update --init
+  #        cmake -DCMAKE_BUILD_TYPE=Debug
+  #        make
+  #        CTEST_OUTPUT_ON_FAILURE=1 ctest
